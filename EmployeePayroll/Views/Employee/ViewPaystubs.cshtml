@@ -1,0 +1,36 @@
+﻿@model List<EmployeePayroll.Models.Paystub>
+@{
+    ViewBag.Title = "ViewPaystubs";
+}
+
+
+
+<section>
+    <h2>ViewPaystubs</h2>
+
+    <div>
+        @if (Model.Count() != 0)
+        {
+            <label for="select">Select a pay period: </label>
+            <select id="select">
+                @foreach (var stub in Model)
+                {
+                    <option id="@stub.PaystubID">@stub.StartDate - @stub.EndDate</option>
+                }
+            </select>
+        }
+        else
+        {
+            <span>You have no Paystubs to view yet</span>
+        }
+    </div>
+    <div id="results">
+        @*placeholder for paystub results*@
+    </div>
+</section>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+
+</script>
