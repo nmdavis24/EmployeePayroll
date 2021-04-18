@@ -7,9 +7,10 @@ namespace EmployeePayroll.Models
 {
     public class TaxDeduction
     {
-        public double DeductionAmount { get; set; }
-        public string Description { get; set; }
-        public DateTime EndDate { get; set; }
+        public double FederalTax { get; set; }
+        public double StateTax { get; set; }
+        public double SocialSecurity { get; set; }
+        public double Medicare { get; set; }
         public int PayDeductionsID { get; set; }
     }
 }

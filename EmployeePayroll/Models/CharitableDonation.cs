@@ -7,6 +7,7 @@ namespace EmployeePayroll.Models
 {
     public class CharitableDonation
     {
+        public string Recipient { get; set; }
         public double DonationAmount { get; set; }
         public DateTime EndDate { get; set; }
         public int PayDeductionsID { get; set; }

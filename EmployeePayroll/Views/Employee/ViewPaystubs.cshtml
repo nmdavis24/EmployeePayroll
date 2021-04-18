@@ -13,6 +13,7 @@
         {
             <label for="select">Select a pay period: </label>
             <select id="select">
+                <option disabled>Select Pay Period</option>
                 @foreach (var stub in Model)
                 {
                     <option id="@stub.PaystubID">@stub.StartDate - @stub.EndDate</option>
@@ -32,5 +33,18 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
-
+    $(document).ready(function () {
+        // call the method to get paystub info on dropdown change
+        $("#select").on("change", function () {
+            var paystubID = $(this).val();
+            $.ajax({
+                url: '@Url.Action("_PaystubInfo", "Employee")',
+                data: { paystubID },
+                success: function (data) {
+                    // populate results div with data received from controller
+                    $("#results").html(data);
+                }
+            })
+        });
+    });
 </script>
