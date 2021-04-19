@@ -1,39 +1,46 @@
 ﻿@model EmployeePayroll.Models.ViewModels.PaystubViewModel
 <div>
-    <div class="h3">Paystub for @Model.FirstName @Model.LastName on Pay Period @Model.Dates</div>
-    <div id="pay">
-        <span>Hours Logged: @Model.HoursLogged</span><br />
-        <span>Hourly Rate: @Model.HourlyRate</span><br />
-        <span>Pay: @Model.NormalPay</span>
-        <span>Overtime Hours: @Model.OvertimeHours</span><br />
-        <span>Overtime Rate: @Model.OvertimeRate</span><br />
-        <span>Overtime Pay: @Model.OvertimePay</span><br />
-        @if (Model.BonusPay != 0)
-        {
-            <span>Bonus Pay: @Model.BonusPay</span><br />
-        }
-        <span><b>Total Pay: @Model.TotalPay</b></span>
+    <div class="h4">Paystub for @Model.FirstName @Model.LastName on Pay Period @Model.Dates</div>
+    <div class="col-3">
+        <div id="pay" class="text-align-right">
+            <span>Hours Logged: @Model.HoursLogged</span><br />
+            <span>Hourly Rate: $@Model.HourlyRate</span><br />
+            <span>Pay: $@Model.NormalPay</span><br />
+        </div>
+        <div id="overtimePay" class="text-align-right">
+            <span>Overtime Hours: @Model.OvertimeHours</span><br />
+            <span>Overtime Rate: $@Model.OvertimeRate</span><br />
+            <span>Overtime Pay: $@Model.OvertimePay</span><br />
+            @if (Model.BonusPay != 0)
+            {
+                <span>Bonus Pay: $@Model.BonusPay</span><br />
+            }
+        </div>
+        <div class="text-align-right">
+            <span><b>Gross Pay: $@Model.TotalPay</b></span>
+        </div>
+        <div id="deductions" class="text-align-right">
+            <span>Federal Tax: -$@Model.FederalTax</span><br />
+            <span>State Tax: -$@Model.StateTax</span><br />
+            <span>Social Security: -$@Model.SocialSecurity</span><br />
+            <span>Medicare: -$@Model.Medicare</span><br />
+            @if (Model.WageGarnishment != 0)
+            {
+                <span>Wage Garnishment: -$@Model.WageGarnishment</span><br />
+            }
+            @if (Model.RetirementContribution != 0)
+            {
+                <span>Retirement Contribution: -$@Model.RetirementContribution</span><br />
+            }
+            @foreach (var don in Model.Donations)
+            {
+                <span>Donation to @don.Recipient: -$@don.DonationAmount</span><br />
+            }
+        </div>
+        <div id="takehome" class="text-align-right">
+            <span><b>Total Take-home Pay: $@Model.PayAfterDeductions</b></span><br />
+        </div>
     </div>
-    <div id="deductions">
-        <span>Federal Tax: -@Model.FederalTax</span><br />
-        <span>State Tax: -@Model.StateTax</span><br />
-        <span>Social Security: -@Model.SocialSecurity</span><br />
-        <span>Medicare: -@Model.Medicare</span><br />
-        @if (Model.WageGarnishment != 0)
-        {
-            <span>Wage Garnishment: -@Model.WageGarnishment</span><br />
-        }
-        @if (Model.RetirementContribution != 0)
-        {
-            <span>Retirement Contribution: -@Model.RetirementContribution</span><br />
-        }
-        @foreach (var don in Model.Donations)
-        {
-            <span>Donation to @don.Recipient: -@don.DonationAmount</span><br />
-        }
-    </div>
-    <div id="takehome">
-        <span>Total Take-home Pay: @Model.PayAfterDeductions</span><br />
-    </div>
-    
+
+
 </div>

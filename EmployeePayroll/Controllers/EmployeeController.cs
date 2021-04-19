@@ -19,46 +19,47 @@ namespace EmployeePayroll.Controllers
             },
             Paystubs = new List<Paystub>
             {
-
+                { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 4, 11, 8, 0, 0), EndDate = new DateTime(2021, 4, 18, 8, 0, 0), PayDeductionsID = 1, PaystubID = 1 } },
+                { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 4, 3, 8, 0, 0), EndDate = new DateTime(2021, 4, 10, 8, 0, 0), PayDeductionsID = 1, PaystubID = 2 } },
+                { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 3, 26, 8, 0, 0), EndDate = new DateTime(2021, 4, 2, 8, 0, 0), PayDeductionsID = 1, PaystubID = 3 } },
+                { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 3, 18, 8, 0, 0), EndDate = new DateTime(2021, 3, 25, 8, 0, 0), PayDeductionsID = 1, PaystubID = 4 } }
             },
             Pays = new List<Pay>
             {
-
+                { new Pay { GrossPay = 1000, PaystubID = 1, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 2, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 3, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 4, HourlyRate = 25, HoursLogged = 40 } }
             },
             BonusPays = new List<BonusPay>
             {
-
+                {new BonusPay { PaystubID = 1, BonusAmount = 500 } },
+                {new BonusPay { PaystubID = 4, BonusAmount = 250 } }
             },
             CharitableDonations = new List<CharitableDonation>
             {
-
+                { new CharitableDonation { PayDeductionsID = 1, DonationAmount = 200, EndDate = new DateTime(2021, 4, 11, 8, 0, 0), Recipient = "St. Jude's" } }
             },
             OvertimePays = new List<OvertimePay>
             {
-
+                { new OvertimePay { PaystubID = 2, OvertimeHours = 10, OvertimeRate = 37.5 } }
             },
             PayDeductions = new List<PayDeductions>
             {
-
+                { new PayDeductions { PayDeductionsID = 1, EmployeeUsername = "nmd0005" } }
             },
             RetirementContributions = new List<RetirementContribution> {
-            
+                { new RetirementContribution { PayDeductionsID = 1, ContributionAmount = 100, EndDate = new DateTime(2021, 4, 18, 8, 0, 0) } }
             },
             TaxDeductions = new List<TaxDeduction>
             {
-
+                { new TaxDeduction { PayDeductionsID = 1, FederalTax = 50, StateTax = 20, Medicare = 15.75, SocialSecurity = 5.5 } }
             },
             WageGarnishments = new List<WageGarnishment>
             {
-
+                { new WageGarnishment { PayDeductionsID = 2, EndDate = new DateTime(2021, 4, 18, 8, 0, 0), Amount = 125, Description = "Child Support!" } }
             }
         };
-
-        // GET: Employee
-        public ActionResult Index()
-        {
-            return View();
-        }
 
         public static bool isLoggedIn()
         {
@@ -72,11 +73,23 @@ namespace EmployeePayroll.Controllers
             }
         }
 
+        public static bool isManager()
+        {
+            if (System.Web.HttpContext.Current.Session["isManager"] != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        [HttpGet]
         public ActionResult Login()
         {
             return View();
         }
-
+        [HttpPost]
         public ActionResult Login(LoginViewModel login)
         {
             // finds employee row in database with matching username and password. null if none found
@@ -89,35 +102,28 @@ namespace EmployeePayroll.Controllers
                 {
                     Session["isManager"] = "true";
                 }
-                else
-                {
-                    Session["isManager"] = "false";
-                }
-                return Json(new
-                {
-                    success = true
-                });
+                return RedirectToAction("ViewPaystubs");
             }
             else
             {
                 if (db.Employees.FirstOrDefault(e => e.Username.ToLower() == login.Username.ToLower()) != null)
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "Incorrect password. Please try again."
-                    });
+                    ModelState.AddModelError("Password", "Incorrect password. Please try again.");
+                    return View(login);
                 }
                 else
                 {
-                    return Json(new
-                    {
-                        success = false,
-                        message = "No employees by that username were found."
-                    });
+                    ModelState.AddModelError("Username", "No employees by that username were found.");
+                    return View(login);
                 }
 
             }
+        }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            return RedirectToAction("Login");
         }
 
         public ActionResult ViewPaystubs()
@@ -148,10 +154,10 @@ namespace EmployeePayroll.Controllers
             var overtime = db.OvertimePays.FirstOrDefault(d => d.PaystubID == paystubID);
             // deductions
             var deductions = db.PayDeductions.FirstOrDefault(p => p.EmployeeUsername == paystub.EmployeeUsername);
-            var retirement = db.RetirementContributions.FirstOrDefault(r => r.PayDeductionsID == deductions.PayDeductionsID);
+            var retirement = db.RetirementContributions.FirstOrDefault(r => r.PayDeductionsID == deductions.PayDeductionsID && r.EndDate < paystub.StartDate);
             var taxes = db.TaxDeductions.FirstOrDefault(t => t.PayDeductionsID == deductions.PayDeductionsID);
-            var donations = db.CharitableDonations.Where(d => d.PayDeductionsID == deductions.PayDeductionsID).ToList();
-            var garnish = db.WageGarnishments.Where(g => g.PayDeductionsID == deductions.PayDeductionsID).ToList();
+            var donations = db.CharitableDonations.Where(d => d.PayDeductionsID == deductions.PayDeductionsID && d.EndDate < paystub.StartDate).ToList();
+            var garnish = db.WageGarnishments.Where(g => g.PayDeductionsID == deductions.PayDeductionsID && g.EndDate < paystub.StartDate).ToList();
             // employee info
             var employee = db.Employees.FirstOrDefault(e => e.Username == paystub.EmployeeUsername);
 
@@ -174,9 +180,9 @@ namespace EmployeePayroll.Controllers
                 totalDonations += don.DonationAmount;
             }
 
-            var overtimePay = overtime.OvertimeHours * overtime.OvertimeRate;
+            var overtimePay = (overtime?.OvertimeHours ?? 0) * (overtime?.OvertimeRate ?? 0);
             var totalPay = overtimePay + totalBonus + pay.GrossPay;
-            var payAfter = totalPay - totalGarnishment - totalDonations - taxes.StateTax - taxes.FederalTax - taxes.SocialSecurity - taxes.Medicare - retirement.ContributionAmount;
+            var payAfter = totalPay - totalGarnishment - totalDonations - taxes.StateTax - taxes.FederalTax - taxes.SocialSecurity - taxes.Medicare - (retirement?.ContributionAmount ?? 0);
 
             // get all the data we need and put it in the viewmodel
             PaystubViewModel vm = new PaystubViewModel

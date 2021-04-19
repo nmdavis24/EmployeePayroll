@@ -1,22 +1,28 @@
 ﻿@model List<EmployeePayroll.Models.Paystub>
 @{
-    ViewBag.Title = "ViewPaystubs";
+    ViewBag.Title = "View Paystubs";
 }
 
-
+<style>
+    .text-align-right {
+        text-align: right;
+        border-top: 2px solid black;        
+    }
+</style>
 
 <section>
-    <h2>ViewPaystubs</h2>
+    <h2>View Paystubs</h2>
 
-    <div>
+    <div class="form-inline">
         @if (Model.Count() != 0)
         {
+
             <label for="select">Select a pay period: </label>
-            <select id="select">
-                <option disabled>Select Pay Period</option>
+            <select id="select" class="form-control col-6 ml-2" style="width: 75%;">
+                <option selected disabled>Select Pay Period</option>
                 @foreach (var stub in Model)
                 {
-                    <option id="@stub.PaystubID">@stub.StartDate - @stub.EndDate</option>
+                    <option value="@stub.PaystubID">@stub.StartDate - @stub.EndDate</option>
                 }
             </select>
         }
@@ -25,7 +31,7 @@
             <span>You have no Paystubs to view yet</span>
         }
     </div>
-    <div id="results">
+    <div id="results" class="mt-4">
         @*placeholder for paystub results*@
     </div>
 </section>

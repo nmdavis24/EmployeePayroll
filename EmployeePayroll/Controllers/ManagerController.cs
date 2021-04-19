@@ -9,16 +9,41 @@ namespace EmployeePayroll.Controllers
 {
     public class ManagerController : Controller
     {
-        // GET: Manager
-        public ActionResult Index()
-        {
-            return View();
-        }
 
-        public ActionResult AddEmployee(string username, string first, string last, string password, string address)
+        public ActionResult EmployeeTable()
+        {
+            if (EmployeeController.isLoggedIn() && Session["isManager"] != null)
+            {
+                var employees = EmployeeController.db.Employees.ToList();
+                return View(employees);
+            }
+            else
+            {
+                return RedirectToAction("Login");
+            }
+        }
+        /// <summary>
+        /// Adds employee to simulated db
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="first"></param>
+        /// <param name="last"></param>
+        /// <param name="password"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public ActionResult AddEmployee(string username, string first, string last, string password, string address, bool isManager)
         {
             try
             {
+                var person = EmployeeController.db.Employees.FirstOrDefault(e => e.Username.ToLower() == username.ToLower());
+                if (person != null)
+                {
+                    return Json(new
+                    {
+                        duplicate = true
+                    });
+                }
+                
                 Employee newEmp = new Employee
                 {
                     Username = username,
@@ -27,9 +52,9 @@ namespace EmployeePayroll.Controllers
                     Password = password,
                     Address = address,
                     DateEmployed = DateTime.Now,
-                    isManager = false
+                    isManager = isManager
                 };
-                EmployeeController.db.Employees.Append(newEmp);
+                EmployeeController.db.Employees.Add(newEmp);
                 return Json(new
                 {
                     success = true
@@ -47,12 +72,22 @@ namespace EmployeePayroll.Controllers
 
         public ActionResult DeleteEmployee(string username)
         {
-            Employee emp = EmployeeController.db.Employees.FirstOrDefault(e => e.Username == username);
-            EmployeeController.db.Employees.Remove(emp);
-            return Json(new
+            try
             {
-                success = true
-            });
+                Employee emp = EmployeeController.db.Employees.FirstOrDefault(e => e.Username == username);
+                EmployeeController.db.Employees.Remove(emp);
+                return Json(new
+                {
+                    success = true
+                });
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false
+                });
+            }
         }
     }
 }
