@@ -154,10 +154,10 @@ namespace EmployeePayroll.Controllers
             var overtime = db.OvertimePays.FirstOrDefault(d => d.PaystubID == paystubID);
             // deductions
             var deductions = db.PayDeductions.FirstOrDefault(p => p.EmployeeUsername == paystub.EmployeeUsername);
-            var retirement = db.RetirementContributions.FirstOrDefault(r => r.PayDeductionsID == deductions.PayDeductionsID && r.EndDate < paystub.StartDate);
+            var retirement = db.RetirementContributions.FirstOrDefault(r => r.PayDeductionsID == deductions.PayDeductionsID && r.EndDate > paystub.StartDate);
             var taxes = db.TaxDeductions.FirstOrDefault(t => t.PayDeductionsID == deductions.PayDeductionsID);
-            var donations = db.CharitableDonations.Where(d => d.PayDeductionsID == deductions.PayDeductionsID && d.EndDate < paystub.StartDate).ToList();
-            var garnish = db.WageGarnishments.Where(g => g.PayDeductionsID == deductions.PayDeductionsID && g.EndDate < paystub.StartDate).ToList();
+            var donations = db.CharitableDonations.Where(d => d.PayDeductionsID == deductions.PayDeductionsID && d.EndDate > paystub.StartDate).ToList();
+            var garnish = db.WageGarnishments.Where(g => g.PayDeductionsID == deductions.PayDeductionsID && g.EndDate > paystub.StartDate).ToList();
             // employee info
             var employee = db.Employees.FirstOrDefault(e => e.Username == paystub.EmployeeUsername);
 
