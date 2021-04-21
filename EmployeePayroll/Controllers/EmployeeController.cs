@@ -10,26 +10,39 @@ namespace EmployeePayroll.Controllers
 {
     public class EmployeeController : Controller
     {
+
+        // What we pull data from for our application
         public static DatabaseSimulator db = new DatabaseSimulator
         {
             Employees = new List<Employee>
             {
                 { new Employee { Username = "nmd0005", FirstName = "Noah", LastName = "Davis", Password = "HelloWorld123", Address = "1957 Wire Road Auburn, AL 36832", DateEmployed = new DateTime(2020, 4, 18, 8, 0, 0), isManager = true } },
-                { new Employee { Username = "mmb0081", FirstName = "Miller", LastName = "Barnes", Password = "HelloThere123", Address = "123 Main Street Auburn, AL 36830", DateEmployed = new DateTime(2020, 4, 18, 8, 0, 0), isManager = false }}
+                { new Employee { Username = "mmb0081", FirstName = "Miller", LastName = "Barnes", Password = "HelloThere123", Address = "123 Main Street Auburn, AL 36830", DateEmployed = new DateTime(2020, 4, 18, 8, 0, 0), isManager = false }},
+                { new Employee { Username = "mdp0047", FirstName = "Myles", LastName = "Parkhurst", Password = "LoremIpsum", Address = "123 Main Street Auburn, AL 36830", DateEmployed = new DateTime(2020, 4, 18, 8, 0, 0), isManager = false }}
             },
             Paystubs = new List<Paystub>
             {
                 { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 4, 11, 8, 0, 0), EndDate = new DateTime(2021, 4, 18, 8, 0, 0), PayDeductionsID = 1, PaystubID = 1 } },
                 { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 4, 3, 8, 0, 0), EndDate = new DateTime(2021, 4, 10, 8, 0, 0), PayDeductionsID = 1, PaystubID = 2 } },
                 { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 3, 26, 8, 0, 0), EndDate = new DateTime(2021, 4, 2, 8, 0, 0), PayDeductionsID = 1, PaystubID = 3 } },
-                { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 3, 18, 8, 0, 0), EndDate = new DateTime(2021, 3, 25, 8, 0, 0), PayDeductionsID = 1, PaystubID = 4 } }
+                { new Paystub { EmployeeUsername = "nmd0005", StartDate = new DateTime(2021, 3, 18, 8, 0, 0), EndDate = new DateTime(2021, 3, 25, 8, 0, 0), PayDeductionsID = 1, PaystubID = 4 } },
+                { new Paystub { EmployeeUsername = "mmb0081", StartDate = new DateTime(2021, 3, 18, 8, 0, 0), EndDate = new DateTime(2021, 3, 25, 8, 0, 0), PayDeductionsID = 2, PaystubID = 5 } },
+                { new Paystub { EmployeeUsername = "mmb0081", StartDate = new DateTime(2021, 3, 26, 8, 0, 0), EndDate = new DateTime(2021, 4, 2, 8, 0, 0), PayDeductionsID = 2, PaystubID = 6 } },
+                { new Paystub { EmployeeUsername = "mmb0081", StartDate = new DateTime(2021, 4, 3, 8, 0, 0), EndDate = new DateTime(2021, 4, 10, 8, 0, 0), PayDeductionsID = 2, PaystubID = 7 } },
+                { new Paystub { EmployeeUsername = "mmb0081", StartDate = new DateTime(2021, 4, 11, 8, 0, 0), EndDate = new DateTime(2021, 4, 18, 8, 0, 0), PayDeductionsID = 2, PaystubID = 8 } },
+                { new Paystub { EmployeeUsername = "mmb0081", StartDate = new DateTime(2021, 3, 10, 8, 0, 0), EndDate = new DateTime(2021, 3, 17, 8, 0, 0), PayDeductionsID = 2, PaystubID = 9 } }
             },
             Pays = new List<Pay>
             {
                 { new Pay { GrossPay = 1000, PaystubID = 1, HourlyRate = 25, HoursLogged = 40 } },
                 { new Pay { GrossPay = 1000, PaystubID = 2, HourlyRate = 25, HoursLogged = 40 } },
                 { new Pay { GrossPay = 1000, PaystubID = 3, HourlyRate = 25, HoursLogged = 40 } },
-                { new Pay { GrossPay = 1000, PaystubID = 4, HourlyRate = 25, HoursLogged = 40 } }
+                { new Pay { GrossPay = 1000, PaystubID = 4, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 5, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 6, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 7, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 8, HourlyRate = 25, HoursLogged = 40 } },
+                { new Pay { GrossPay = 1000, PaystubID = 9, HourlyRate = 25, HoursLogged = 40 } }
             },
             BonusPays = new List<BonusPay>
             {
@@ -46,14 +59,16 @@ namespace EmployeePayroll.Controllers
             },
             PayDeductions = new List<PayDeductions>
             {
-                { new PayDeductions { PayDeductionsID = 1, EmployeeUsername = "nmd0005" } }
+                { new PayDeductions { PayDeductionsID = 1, EmployeeUsername = "nmd0005" } },
+                { new PayDeductions { PayDeductionsID = 2, EmployeeUsername = "mmb0081" } }
             },
             RetirementContributions = new List<RetirementContribution> {
                 { new RetirementContribution { PayDeductionsID = 1, ContributionAmount = 100, EndDate = new DateTime(2021, 4, 18, 8, 0, 0) } }
             },
             TaxDeductions = new List<TaxDeduction>
             {
-                { new TaxDeduction { PayDeductionsID = 1, FederalTax = 50, StateTax = 20, Medicare = 15.75, SocialSecurity = 5.5 } }
+                { new TaxDeduction { PayDeductionsID = 1, FederalTax = 50, StateTax = 20, Medicare = 15.75, SocialSecurity = 5.5 } },
+                { new TaxDeduction { PayDeductionsID = 2, FederalTax = 50, StateTax = 20, Medicare = 15.75, SocialSecurity = 5.5 } }
             },
             WageGarnishments = new List<WageGarnishment>
             {
@@ -125,7 +140,10 @@ namespace EmployeePayroll.Controllers
             Session.Clear();
             return RedirectToAction("Login");
         }
-
+        /// <summary>
+        /// Returns 
+        /// </summary>
+        /// <returns></returns>
         public ActionResult ViewPaystubs()
         {
             if (isLoggedIn())
@@ -140,7 +158,12 @@ namespace EmployeePayroll.Controllers
                 return RedirectToAction("Login");
             }
         }
-
+        /// <summary>
+        /// Collects all the data needed to show the paystub selected in the dropdown
+        /// on the ViewPaystubs page and returns the partialview to the page.
+        /// </summary>
+        /// <param name="paystubID"></param>
+        /// <returns></returns>
         public PartialViewResult _PaystubInfo(int paystubID)
         {
             // get all the data we need from db
@@ -179,7 +202,7 @@ namespace EmployeePayroll.Controllers
             {
                 totalDonations += don.DonationAmount;
             }
-
+            // overtime may be null
             var overtimePay = (overtime?.OvertimeHours ?? 0) * (overtime?.OvertimeRate ?? 0);
             var totalPay = overtimePay + totalBonus + pay.GrossPay;
             var payAfter = totalPay - totalGarnishment - totalDonations - taxes.StateTax - taxes.FederalTax - taxes.SocialSecurity - taxes.Medicare - (retirement?.ContributionAmount ?? 0);
